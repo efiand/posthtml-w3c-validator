@@ -24,7 +24,8 @@ const W3C_TIMEOUT = 1000;
 const validateHtml = async ({
 	htmlCode,
 	sourceName = '',
-	htmlvalidateOptions = DEFAULT_OPTIONS
+	htmlvalidateOptions = DEFAULT_OPTIONS,
+	forceOffline = false
 }) => {
 	let output = '';
 	const sourceStr = sourceName ? `${sourceName} ` : '';
@@ -34,26 +35,8 @@ const validateHtml = async ({
 		controller.abort();
 	}, W3C_TIMEOUT);
 
-	try {
-		// Онлайн-валидатор HTML
-
-		const validRes = await fetch('https://validator.nu/?out=json', {
-			body: htmlCode,
-			headers: { 'Content-Type': 'text/html' },
-			method: 'POST',
-			signal: controller.signal
-		});
-		const { messages = [] } = await validRes.json();
-		messages.forEach(({ extract, firstColumn, lastLine, message, type }) => {
-			const { logOutput, title } = Severity[SeverityLevel[type]];
-			const prefix = `\n[${chalk.cyan('Validate HTML Online')}] ${sourceStr}(${lastLine}:${firstColumn + 1})`;
-			const selectorMsg = ` ${chalk.cyan(extract)}`;
-
-			output += `${prefix}${selectorMsg}:\n${logOutput.underline(title)}: ${logOutput(message)}\n`;
-		});
-	} catch (err) {
-		// Оффлайн-валидатор HTML
-
+	// Оффлайн-валидатор HTML
+	const validateOffline = () => {
 		const report = validateInstance.validateString(htmlCode, htmlvalidateOptions);
 
 		report.results.forEach(({ messages }) => {
@@ -67,6 +50,31 @@ const validateHtml = async ({
 				}
 			});
 		});
+	};
+
+	try {
+		// Онлайн-валидатор HTML
+		const validRes = await fetch('https://validator.nu/?out=json', {
+			body: htmlCode,
+			headers: { 'Content-Type': 'text/html' },
+			method: 'POST',
+			signal: controller.signal
+		});
+		const { messages = [] } = await validRes.json();
+
+		if (messages.length) {
+			messages.forEach(({ extract, firstColumn, lastLine, message, type }) => {
+				const { logOutput, title } = Severity[SeverityLevel[type]];
+				const prefix = `\n[${chalk.cyan('Validate HTML Online')}] ${sourceStr}(${lastLine}:${firstColumn + 1})`;
+				const selectorMsg = ` ${chalk.cyan(extract)}`;
+
+				output += `${prefix}${selectorMsg}:\n${logOutput.underline(title)}: ${logOutput(message)}\n`;
+			});
+		} else if (forceOffline) {
+			validateOffline();
+		}
+	} catch (err) {
+		validateOffline();
 	}
 
 	return output;
@@ -75,18 +83,25 @@ const validateHtml = async ({
 module.exports = {
 	validateHtml,
 	getPosthtmlW3c: ({
-		getSourceName = (tree) => tree.options.from,
+		getSourceName = (filename) => filename,
 		log = console.log,
-		htmlvalidateOptions = DEFAULT_OPTIONS
+		htmlvalidateOptions = DEFAULT_OPTIONS,
+		forceOffline = false,
+		exit = false
 	} = {}) => async (tree) => {
 		const validationMessage = await validateHtml({
 			htmlCode: render(tree),
-			sourceName: getSourceName(tree),
-			htmlvalidateOptions
+			sourceName: getSourceName(tree.options.from),
+			htmlvalidateOptions,
+			forceOffline
 		});
 
 		if (validationMessage) {
 			log(validationMessage);
+
+			if (exit) {
+				throw new Error(chalk.red('Invalid HTML!'));
+			}
 		}
 
 		return tree;
