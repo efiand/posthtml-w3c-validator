@@ -82,7 +82,7 @@ const validateHtml = async ({
 
 module.exports = {
 	validateHtml,
-	getPosthtmlW3c: ({
+	getPosthtmlW3cValidator: ({
 		getSourceName = (filename) => filename,
 		log = console.log,
 		htmlvalidateOptions = DEFAULT_OPTIONS,

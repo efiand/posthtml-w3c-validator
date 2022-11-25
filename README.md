@@ -1,17 +1,17 @@
-# pineglade-w3c [![npm version](https://img.shields.io/npm/v/pineglade-w3c.svg)](https://www.npmjs.com/package/pineglade-w3c)
+# posthtml-w3c-validator [![npm version](https://img.shields.io/npm/v/posthtml-w3c-validator.svg)](https://www.npmjs.com/package/posthtml-w3c-validator)
 
 Онлайн-валидатор W3C с резервным оффлайн-валидатором.
 
 
 ## Установка
 
-`npm i -E pineglade-w3c`
+`npm i -E posthtml-w3c-validator`
 
 
 ## Использование в произвольном коде
 
 ```js
-const { validateHtml } = require('pineglade-w3c');
+const { validateHtml } = require('posthtml-w3c-validator');
 
 // Где-то внутри middleware, получившей HTML-код:
 if (process.env.NODE_ENV === 'development') {
@@ -30,18 +30,18 @@ if (process.env.NODE_ENV === 'development') {
 
 
 ```js
-const { getPosthtmlW3c } = require('pineglade-w3c');
+const { getPosthtmlW3cValidator } = require('posthtml-w3c-validator');
 
 module.exports = () => ({
   plugins: [
     // other plugins
-    getPosthtmlW3c()
+    getPosthtmlW3cValidator()
   ]
 });
 
 ```
 
-`getPosthtmlW3c` может принимать объект с необязательными параметрами:
+`getPosthtmlW3cValidator` может принимать объект с необязательными параметрами:
 
 1. `getSourceName` – коллбэк для генерации имени источника на основе posthtml-дерева. По умолчанию – `(tree) => tree.options.from` .
 2. `log` – коллбэк-логгер. По умолчанию – `console.log`.

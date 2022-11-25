@@ -1,6 +1,6 @@
 {
-	"name": "pineglade-w3c",
-	"version": "1.0.3",
+	"name": "posthtml-w3c-validator",
+	"version": "1.1.0",
 	"description": "Online node W3C validator with fallback to offline version ",
 	"main": "index.js",
 	"scripts": {
@@ -8,15 +8,15 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/efiand/pineglade-w3c.git"
+		"url": "git+https://github.com/efiand/posthtml-w3c-validator.git"
 	},
 	"keywords": [],
 	"author": "efiand",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/efiand/pineglade-w3c/issues"
+		"url": "https://github.com/efiand/posthtml-w3c-validator/issues"
 	},
-	"homepage": "https://efiand.github.io/pineglade-w3c",
+	"homepage": "https://efiand.github.io/posthtml-w3c-validator",
 	"dependencies": {
 		"chalk": "4.1.2",
 		"html-validate": "6.5.0",
