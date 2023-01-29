@@ -7,8 +7,8 @@
 		"attribute-boolean-style": "off",
 		"input-missing-label": "off",
 		"no-inline-style": "off",
-		"no-self-closing": "off",
 		"no-trailing-whitespace": "off",
-		"require-sri": "off"
+		"require-sri": "off",
+		"void-style": "off"
 	}
 }
